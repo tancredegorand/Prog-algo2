@@ -93,7 +93,7 @@ void FibonacciThread::_assert(int n, int result) const
 		fibo = 1;
 	else if (n > 1)
 	{
-		for (int i=1; i<n; ++i)
+        for (int i=1; i<=n; ++i)
 		{
 			fibo=fibo1+fibo2;
 			fibo1=fibo2;

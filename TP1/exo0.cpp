@@ -12,7 +12,6 @@ int sum(int n)
     {
         return_and_display(n + sum(n-1));
     }
-    std::cout << "yolo" << std::endl;
     return_and_display(n);
 }
 
