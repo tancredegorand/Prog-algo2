@@ -421,7 +421,7 @@ void MainWindow::updateScene()
         functionCallItems.push_back(item);
         toAdd.push_back(item);
         int y = maxNumbersY + 30 * functionCallItems.size();
-        item->setPos(50 + 30 * functionCallItems.size(), maxNumbersY);
+        item->setPos(50 + 30 * functionCallItems.size(), maxNumbersY + 30 * functionCallItems.size());
         item->setFont(font);
         item->setDefaultTextColor(QColor(215,235,255));
 
