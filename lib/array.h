@@ -105,10 +105,21 @@ public:
 
     ElementType& get(const int index)
     {
-        if(index >= _data.size())
+        if(index >= (int)_data.size())
             throw std::out_of_range("get(): Given index is out of bound !");
         _hasBeenReaden[index] = true;
         _readAccess++;
+        std::this_thread::sleep_for(std::chrono::milliseconds(MainWindow::instruction_duration));
+        return _data[index];
+    }
+
+    ElementType get(const int index) const
+    {
+        TemplateArray<T>* self = const_cast<TemplateArray<T>*>(this);
+        if(index >= (int)_data.size())
+            throw std::out_of_range("get(): Given index is out of bound !");
+        self->_hasBeenReaden[index] = true;
+        self->_readAccess++;
         std::this_thread::sleep_for(std::chrono::milliseconds(MainWindow::instruction_duration));
         return _data[index];
     }
@@ -139,7 +150,7 @@ public:
     {
         if(index1 >= (int)_data.size() || index2 >= (int)_data.size())
             throw std::out_of_range("set(): Given index is out of bound !");
-        const ElementType& tmp = _data[index1];
+        const ElementType tmp = _data[index1];
         _data[index1] = _data[index2];
         _data[index2] = tmp;
         _hasBeenWritten[index1] = _hasBeenWritten[index2] = true;
@@ -149,16 +160,15 @@ public:
         std::this_thread::sleep_for(std::chrono::milliseconds(MainWindow::instruction_duration*2));
     }
 
-    const ElementType& operator[](int index) const
+    ElementType operator[](int index) const
     {
-        return __get__(index);
+        return get(index);
     }
 
     ElementType& operator[](int index)
     {
-        return __get__(index);
+        return get(index);
     }
-
 
     void operator=(const TemplateArray<ElementType>& other)
     {

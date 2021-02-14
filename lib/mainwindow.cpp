@@ -28,7 +28,7 @@ MainWindow* MainWindow::instance()
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent), startButton("Start"), stopButton("Stop"),
     timer(this), background(nullptr), zoom(false), scale(1),
-    workerThread(nullptr), maxNumbersY(150)
+    maxNumbersY(150), workerThread(nullptr)
 {
     initialize();
     resize(1280, 720);
@@ -421,7 +421,7 @@ void MainWindow::updateScene()
         functionCallItems.push_back(item);
         toAdd.push_back(item);
         int y = maxNumbersY + 30 * functionCallItems.size();
-        item->setPos(50 + 30 * functionCallItems.size(), maxNumbersY + 30 * functionCallItems.size());
+        item->setPos(50 + 30 * functionCallItems.size(), y);
         item->setFont(font);
         item->setDefaultTextColor(QColor(215,235,255));
 
