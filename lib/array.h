@@ -141,7 +141,7 @@ public:
 
     void __set__(const int index, const ElementType& value)
     {
-        if(index >= _data.size())
+        if(index >= (int) _data.size())
             throw std::out_of_range("set(): Given index is out of bound !");
         _data[index] = value;
     }

@@ -7,14 +7,19 @@
 
 struct Node
 {
-	Node(int value=0) : left(nullptr), right(nullptr), value(value) {}
+    Node(int value)
+        {}
 
 	virtual ~Node()
 	{
-		dropChildren();
+        reset();
 	};
 
-	virtual uint height() const {return 0;}
+    virtual void initNode(int value) {};
+    virtual int get_value() const {return 0;}
+    virtual Node* get_left_child() const {return nullptr;}
+    virtual Node* get_right_child() const {return nullptr;}
+    virtual uint height() const {return 0;}
 	virtual uint nodesCount() const {return 0;}
 	virtual bool isLeaf() const {return false;}
 	virtual void allLeaves(Node*[], uint&) {return;}
@@ -24,13 +29,8 @@ struct Node
 	virtual Node* find(int) {return nullptr;}
 	virtual void insertNumber(int) {return;}
 
-	void dropChildren();
-	void buildFromValues(const std::vector<int>& values);
-
-
-	Node* left;
-	Node* right;
-	int value;
+    virtual void reset() {};
+    void buildFromValues(const std::vector<int>& values);
 };
 
 Node* createNode(int value);

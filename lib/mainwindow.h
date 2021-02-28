@@ -134,9 +134,6 @@ private:
 
 	QGraphicsView view;
     QWidget parametersView;
-    QPushButton startButton;
-    QPushButton stopButton;
-
     QFormLayout parametersLayout;
 
 	QVector<QVector<NumberGraphicsItem*> > numberItems;
@@ -159,6 +156,10 @@ private:
 
 protected:
 	QGraphicsScene scene;
+    QVBoxLayout* workerLayout;
+
+    QPushButton startButton;
+    QPushButton stopButton;
 
 	QVector<QGraphicsItem*> toAdd;
 	QVector<QPair<QGraphicsTextItem*, QString> > toUpdate;

@@ -26,9 +26,9 @@ MainWindow* MainWindow::instance()
 }
 
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent), startButton("Start"), stopButton("Stop"),
-    timer(this), background(nullptr), zoom(false), scale(1),
-    maxNumbersY(150), workerThread(nullptr)
+    QMainWindow(parent),
+    timer(this), background(nullptr), zoom(false), scale(1), workerLayout(nullptr),
+    maxNumbersY(150), startButton("Start"), stopButton("Stop"), workerThread(nullptr)
 {
     initialize();
     resize(1280, 720);
@@ -52,7 +52,8 @@ void MainWindow::initialize()
     this->setCentralWidget(&view);
 
     QWidget* workerUI = new QWidget();
-    QVBoxLayout* workerLayout = new QVBoxLayout();
+
+    workerLayout = new QVBoxLayout();
 
     workerUI->setLayout(workerLayout);
     workerLayout->addWidget(&parametersView);
@@ -234,6 +235,8 @@ void MainWindow::clearArrays()
 
 QVariant &MainWindow::addIntParam(QString param_name, int defaultValue, int min, int max)
 {
+    if (parameters.contains(param_name))
+        return parameters[param_name];
     QSpinBox* intEditor = new QSpinBox();
     intEditor->setObjectName(param_name);
     intEditor->setRange(min, max);
