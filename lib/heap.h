@@ -24,19 +24,19 @@ public:
 	void heapSort();
 };
 
-class HuffmanHeap : public Heap
-{
-public:
-	HuffmanHeap(uint size=100);
-	HuffmanHeap(const HuffmanHeap& other);
+//class HuffmanHeap : public Heap
+//{
+//public:
+//	HuffmanHeap(uint size=100);
+//	HuffmanHeap(const HuffmanHeap& other);
 
-	char getCharacter(const uint i);
-	void setCharacter(const uint i, char c);
+//	char getCharacter(const uint i);
+//	void setCharacter(const uint i, char c);
 
-	void resize(uint size);
+//	void resize(uint size);
 
-private:
-	std::vector<char> characters;
-};
+//private:
+//	std::vector<char> characters;
+//};
 
 #endif // HEAP_H

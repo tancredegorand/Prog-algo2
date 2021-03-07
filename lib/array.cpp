@@ -4,6 +4,7 @@
 
 #include <QThread>
 
+bool AbstractArray::wait_for_operations = true;
 
 AbstractArray::AbstractArray(size_t size)
     : _readAccess(0), _writeAccess(0)
@@ -17,6 +18,14 @@ AbstractArray::AbstractArray(const AbstractArray &other)
       _readAccess(other._readAccess),
       _writeAccess(other._writeAccess)
 {}
+
+void AbstractArray::operation_sleep(float factor) const
+{
+    if (wait_for_operations)
+        std::this_thread::sleep_for(std::chrono::milliseconds(
+            (long)(MainWindow::instruction_duration*factor)
+        ));
+}
 
 void AbstractArray::resize(size_t size)
 {
@@ -82,6 +91,16 @@ void Array::fillSortedRandom(const int min, const int max)
         _max = ((max - _data[i-1]) - min) / 2;
         _data[i] = _data[i-1] + qrand() % _max + min;
     }
+}
+
+std::vector<int>::iterator Array::begin()
+{
+    return _data.begin();
+}
+
+std::vector<int>::iterator Array::end()
+{
+    return _data.end();
 }
 
 QString Array::toString() const

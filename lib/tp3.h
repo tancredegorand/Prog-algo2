@@ -59,13 +59,11 @@ public:
 
     int width() const;
     int height() const;
-
-    bool needUpdate() const;
-
     int _treeHeight() const;
 
+    virtual bool needUpdate() const;
     virtual void updateNode();
-    void updateLayout();
+    void updateLayout(int& maxX, int& maxY);
 
     QRectF boundingRect() const override;
     void paint(QPainter* painter, const QStyleOptionGraphicsItem *option,
@@ -320,9 +318,10 @@ public:
         }
         if (source == &this->buildButton)
         {
-            this->clearTrees();
             this->nodes.clear();
             this->tree.initNode(0);
+            this->clearTrees();
+            dirty = true;
         }
 
         QPushButton* button = dynamic_cast<QPushButton*>(source);

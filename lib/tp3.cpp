@@ -20,26 +20,29 @@ void _TestMainWindow::updateLayout()
     updateNumberItems(itemWidth, maxX, maxY);
     maxY += 20;
     updateTreeItems(itemWidth, maxX, maxY);
-
     this->scene.setSceneRect(0, 0, qMax(width(), maxX), qMax(height(),maxY+itemWidth * 2));
     this->dirty=false;
 }
 
-void _TestMainWindow::updateTreeItems(int itemWidth, int &maxY, int &maxX)
+void _TestMainWindow::updateTreeItems(int itemWidth, int &maxX, int &maxY)
 {
-
+    int _maxY = maxY;
+    int _maxX = maxX;
     for (TreeNumberGraphicsItem* item : treeItems)
     {
         item->updateNode();
-        int treeWidth = item->width();
         int startX = 100 + scene.width() * 0.5f;
+        item->setRect(startX, _maxY, itemWidth, itemWidth);
+        item->updateLayout(_maxX, _maxY);
+        _maxY += item->height();
+    }
+
+    for (TreeNumberGraphicsItem* item : treeItems)
+    {
+        int startX = 100 + _maxX * 0.5f;
         item->setRect(startX, maxY, itemWidth, itemWidth);
-        item->updateLayout();
+        item->updateLayout(maxX, maxY);
         maxY += item->height();
-        if (startX + treeWidth > maxX)
-        {
-            maxX = startX + treeWidth;
-        }
     }
 }
 
@@ -235,9 +238,11 @@ uint BinarySearchTreeHeightThread::treeHeight(const BinaryTree& tree) const
 
 TreeNumberGraphicsItem::TreeNumberGraphicsItem(Node* node, QGraphicsItem* parent,
                                                float leftShifting, float rightShifting)
-    : Base(node->get_value(), parent), _node(node), left(nullptr), right(nullptr),
+    : Base(parent), _node(node), left(nullptr), right(nullptr),
       leftShifting(leftShifting), rightShifting(rightShifting)
-{}
+{
+    setData(node->toString());
+}
 
 TreeNumberGraphicsItem::~TreeNumberGraphicsItem()
 {
@@ -251,9 +256,9 @@ void TreeNumberGraphicsItem::setNode(Node* node)
     this->_node = node;
 
     if (node)
-        setNumber(node->get_value());
+        setData(node->toString());
     else
-        setNumber(0);
+        setData("0");
 }
 
 Node* TreeNumberGraphicsItem::node() const
@@ -285,7 +290,7 @@ int TreeNumberGraphicsItem::height() const
 
 bool TreeNumberGraphicsItem::needUpdate() const
 {
-    if (number() != _node->get_value())
+    if (data() != _node->get_value())
         return true;
 
     if (_node->get_left_child() && !left)
@@ -322,27 +327,30 @@ void TreeNumberGraphicsItem::updateNode()
         if (left)
             leftShifting = left->_treeHeight() + 1;
     }
-    if (number() != _node->get_value())
-        setNumber(_node->get_value());
+    if (data() != QVariant(_node->toString()))
+        setData(_node->toString());
+    int this_height = _treeHeight();
     if (_node->get_left_child())
     {
         if (!left)
             left = new TreeNumberGraphicsItem(_node->get_left_child(), this);
-        left->leftShifting = left->_treeHeight();
-        left->rightShifting = (rightShifting / _treeHeight()) / 2 ;
+        left->leftShifting = leftShifting*(0.4f+left->_treeHeight()/(float) this_height);
+        left->rightShifting = qMax<float>(0.3, rightShifting*0.75-leftShifting*0.4);
+
         left->updateNode();
     }
     if (_node->get_right_child())
     {
         if (!right)
             right = new TreeNumberGraphicsItem(_node->get_right_child(), this);
-        right->leftShifting = (leftShifting / _treeHeight()) / 2;
-        right->rightShifting = right->_treeHeight();
+        right->rightShifting = rightShifting*(0.4f+right->_treeHeight()/(float) this_height);
+        right->leftShifting = qMax<float>(0.3, leftShifting*0.75-rightShifting*0.4);
+
         right->updateNode();
     }
 }
 
-void TreeNumberGraphicsItem::updateLayout()
+void TreeNumberGraphicsItem::updateLayout(int &maxX, int &maxY)
 {
     const QRectF& rect = this->rect();
     int width = rect.width();
@@ -351,18 +359,32 @@ void TreeNumberGraphicsItem::updateLayout()
     {
         if (this->scene() && !left->scene())
             this->scene()->addItem(left);
-        left->setRect(rect.x() - width * leftShifting, rect.y() +
-                      width  * (2+left->_treeHeight()) / 2.f, width, width);
-        left->updateLayout();
+        float height = width*0.5+log(width*(left->_treeHeight()+1));
+
+        float y_factor = qMin<float>(qMax<float>(log((1.f+height) * leftShifting), 1.25), 7);
+        float x_factor = qMin<float>(qMax<float>(leftShifting * 0.75, 0.15), 6);
+
+        left->setRect(rect.x() - width * x_factor,
+                      rect.y() + height * y_factor, width, width);
+        left->updateLayout(maxX, maxY);
     }
     if (right)
     {
         if (this->scene() && !right->scene())
             this->scene()->addItem(right);
-        right->setRect(rect.x() + width * rightShifting, rect.y() +
-                       width * (2+right->_treeHeight()) / 2.f, width, width);
-        right->updateLayout();
+        float height = width*0.5+log(width*(right->_treeHeight()+1));
+
+        float y_factor = qMin<float>(qMax<float>(log((1.25f+height) * rightShifting), 1.25), 7);
+        float x_factor = qMin<float>(qMax<float>(rightShifting * 0.75, 0.15), 5);
+
+        right->setRect(rect.x() + width * x_factor,
+                       rect.y() + height  * y_factor, width, width);
+        right->updateLayout(maxX, maxY);
     }
+    if (rect.right() > maxX)
+        maxX = rect.right()+(rightShifting+leftShifting)*width;
+    if (rect.bottom() > maxY)
+        maxY = rect.bottom();
     update();
 }
 

@@ -3,19 +3,20 @@
 
 #include <qglobal.h>
 #include <vector>
+#include <QString>
 
 
 struct Node
 {
-    Node(int value)
-        {}
+    Node(int) {}
+    Node(const Node&) {}
 
 	virtual ~Node()
 	{
         reset();
 	};
 
-    virtual void initNode(int value) {};
+    virtual void initNode(int) {};
     virtual int get_value() const {return 0;}
     virtual Node* get_left_child() const {return nullptr;}
     virtual Node* get_right_child() const {return nullptr;}
@@ -28,6 +29,8 @@ struct Node
 	virtual void postorderTravel(Node*[], uint&) {return;}
 	virtual Node* find(int) {return nullptr;}
 	virtual void insertNumber(int) {return;}
+
+    virtual QString toString() const {return QString::number(this->get_value());}
 
     virtual void reset() {};
     void buildFromValues(const std::vector<int>& values);

@@ -43,8 +43,7 @@ struct Point {
 class NumberGraphicsItem : public QGraphicsEllipseItem
 {
 public:
-	explicit NumberGraphicsItem(const int _number, QGraphicsItem* parent=nullptr);
-	void setNumber(const int _number);
+    explicit NumberGraphicsItem(QGraphicsItem* parent=nullptr);
 
 	void paint(QPainter* painter, const QStyleOptionGraphicsItem *option,
 			   QWidget *widget=nullptr) override;
@@ -52,9 +51,14 @@ public:
 	void displayDefault();
 	void displayReadenState();
 	void displayWrittenState();
-	int number() const;
+
+    const QVariant& data() const;
+    void setData(const QVariant& data);
 
 	static QColor baseColor;
+protected:
+    QString text;
+    QVariant _data;
 
 private:
 	enum State
@@ -65,9 +69,6 @@ private:
 		STATE_COUNT
 	};
 	void displayDefault(bool force);
-
-	QString text;
-	int _number;
 	State state;
 };
 

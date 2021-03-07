@@ -35,7 +35,8 @@ public:
     int readAccessCount() const {return _readAccess;}
     int writeAccessCount() const {return _writeAccess;}
 
-
+    static bool wait_for_operations;
+    void operation_sleep(float factor=1.0f) const;
 protected:
     std::vector<bool> _hasBeenReaden;
     std::vector<bool> _hasBeenWritten;
@@ -109,7 +110,7 @@ public:
             throw std::out_of_range("get(): Given index is out of bound !");
         _hasBeenReaden[index] = true;
         _readAccess++;
-        std::this_thread::sleep_for(std::chrono::milliseconds(MainWindow::instruction_duration));
+        operation_sleep();
         return _data[index];
     }
 
@@ -120,7 +121,7 @@ public:
             throw std::out_of_range("get(): Given index is out of bound !");
         self->_hasBeenReaden[index] = true;
         self->_readAccess++;
-        std::this_thread::sleep_for(std::chrono::milliseconds(MainWindow::instruction_duration));
+        operation_sleep();
         return _data[index];
     }
 
@@ -157,7 +158,7 @@ public:
         _writeAccess += 2;
         _hasBeenReaden[index1] = _hasBeenReaden[index2] = true;
         _readAccess += 2;
-        std::this_thread::sleep_for(std::chrono::milliseconds(MainWindow::instruction_duration*2));
+        operation_sleep(2);
     }
 
     ElementType operator[](int index) const
@@ -225,6 +226,9 @@ public:
     void fillRandom(const int min, const int max);
 
     void fillSortedRandom(const int min, const int max);
+
+    std::vector<int>::iterator begin();
+    std::vector<int>::iterator end();
 
     QString toString() const;
 };

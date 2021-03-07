@@ -27,8 +27,8 @@ MainWindow* MainWindow::instance()
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    timer(this), background(nullptr), zoom(false), scale(1), workerLayout(nullptr),
-    maxNumbersY(150), startButton("Start"), stopButton("Stop"), workerThread(nullptr)
+    timer(this), background(nullptr), zoom(false), scale(1),
+    maxNumbersY(150), workerLayout(nullptr), startButton("Start"), stopButton("Stop"), workerThread(nullptr)
 {
     initialize();
     resize(1280, 720);
@@ -119,7 +119,7 @@ void MainWindow::updateLayout()
 {
 	if (dirty)
 	{
-		int itemWidth = qMax<int>(50, width() * 0.01f);
+        int itemWidth = qMin<int>(qMax<int>(50, width() * 0.01f), 150);
         int maxX=0, maxY=0;
 
 		updateStatusItem(itemWidth);
@@ -318,8 +318,10 @@ void MainWindow::updateInstructionDuration(int value)
 
 int MainWindow::updateNumberItems(int itemWidth, int& maxX, int& maxY)
 {
-	maxY = scene.height() * 0.2f;
-	maxX = 0;
+    if (numberItems.length())
+        maxY += qMin<int>(qMax<int>(50, scene.height() * 0.01f), 150);
+
+    maxX = 0;
 	for (QVector<NumberGraphicsItem*> items : numberItems)
 	{
 		int startX = 0.05 * width();
@@ -436,7 +438,8 @@ void MainWindow::updateScene()
 		numberItems.push_back(QVector<NumberGraphicsItem*>());
 		for (uint i=0; i < array.size(); ++i)
 		{
-			NumberGraphicsItem* item = new NumberGraphicsItem(array.__get__(i));
+            NumberGraphicsItem* item = new NumberGraphicsItem();
+            item->setData(array.__get__(i));
 			numberItems.last().push_back(item);
 			toAdd.push_back(item);
 		}
@@ -449,14 +452,16 @@ void MainWindow::updateScene()
 		{
 			if (j >= numbers.size())
 			{
-				numbers.push_back(new NumberGraphicsItem(array.__get__(j)));
+                NumberGraphicsItem* item = new NumberGraphicsItem();
+                item->setData(array.__get__(j));
+                numbers.push_back(item);
 				// toAdd.push_back(numbers[j]);
 				dirty = true;
 			}
 			NumberGraphicsItem* item = numbers[j];
-			if (item->number() != array.__get__(j))
+            if (item->data() != array.__get__(j))
 			{
-				item->setNumber(array.__get__(j));
+                item->setData(array.__get__(j));
 				dirty = true;
 			}
 			if (array.hasBeenReadenAt(j))
@@ -522,8 +527,8 @@ void MainWindow::stopWorkerThread()
     }
 }
 
-NumberGraphicsItem::NumberGraphicsItem(const int number, QGraphicsItem* parent) :
-	QGraphicsEllipseItem(parent), text(QString::number(number)), _number(number), state(STATE_COUNT)
+NumberGraphicsItem::NumberGraphicsItem(QGraphicsItem* parent) :
+    QGraphicsEllipseItem(parent), state(STATE_COUNT)
 {
 	QPen pen;
 	pen.setWidth(3);
@@ -531,16 +536,23 @@ NumberGraphicsItem::NumberGraphicsItem(const int number, QGraphicsItem* parent) 
 	displayDefault();
 }
 
-void NumberGraphicsItem::setNumber(const int number)
+void NumberGraphicsItem::setData(const QVariant &data)
 {
-	if(this->_number != number)
+    if(this->_data != data)
 	{
-		text = QString::number(number);
-		this->_number = number;
+        text = data.toString();
+        this->_data = data;
 		displayDefault(true);
 		update();
 	}
 }
+
+
+const QVariant &NumberGraphicsItem::data() const
+{
+    return _data;
+}
+
 
 void NumberGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
 							   QWidget *widget)
@@ -562,7 +574,7 @@ void NumberGraphicsItem::displayDefault(bool force)
 	if (state == DEFAULT && !force)
 		return;
 	QPen pen(this->pen());
-	pen.setColor(baseColor.lighter(60+80.f*_number/255.f));
+    pen.setColor(baseColor.lighter(60+80.f*_data.toInt()/255.f));
 	setPen(pen);
 	state = DEFAULT;
 }
@@ -572,7 +584,7 @@ void NumberGraphicsItem::displayReadenState()
 	if (state == READEN)
 		return;
 	QPen pen(this->pen());
-	pen.setColor(QColor(255,20,100).lighter(100+20.f*_number/500.f));
+    pen.setColor(QColor(255,20,100).lighter(100+20.f*_data.toInt()/500.f));
 	setPen(pen);
 	state = READEN;
 }
@@ -581,12 +593,8 @@ void NumberGraphicsItem::displayWrittenState()
 	if (state == WRITEN)
 		return;
 	QPen pen(this->pen());
-	pen.setColor(QColor(150,150,255).lighter(100+20.f*_number/255.f));
+    pen.setColor(QColor(150,150,255).lighter(100+20.f*_data.toInt()/255.f));
 	setPen(pen);
-	state = WRITEN;
+    state = WRITEN;
 }
 
-int NumberGraphicsItem::number() const
-{
-	return _number;
-}
