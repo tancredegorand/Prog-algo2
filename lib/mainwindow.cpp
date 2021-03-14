@@ -117,21 +117,29 @@ Array &MainWindow::newArray(uint size)
 
 void MainWindow::updateLayout()
 {
-	if (dirty)
-	{
+
+    if (dirty)
+    {
         int itemWidth = qMin<int>(qMax<int>(50, width() * 0.01f), 150);
         int maxX=0, maxY=0;
 
-		updateStatusItem(itemWidth);
-		updateBackground();
-		updateNumberItems(itemWidth, maxX, maxY);
+        updateLayoutItems(itemWidth, maxX, maxY);
 
-		this->scene.setSceneRect(0, 0, qMax(width(), maxX), qMax(height(),maxY+itemWidth * 2));
+        this->scene.setSceneRect(0, 0, qMax(width(), maxX), qMax(height(),maxY+itemWidth * 2));
         maxNumbersY = qMax(maxNumbersY, maxY);
-	}
+    }
 
-	this->dirty=false;
+    this->dirty=false;
 }
+
+void MainWindow::updateLayoutItems(int itemWidth, int& originX, int& originY)
+{
+    updateStatusItem(itemWidth);
+    updateBackground();
+    updateNumberItems(itemWidth, originX, originY);
+    updateFunctionCalls(itemWidth, originX, originY);
+}
+
 
 void MainWindow::updateBackground()
 {

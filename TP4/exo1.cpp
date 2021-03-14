@@ -21,12 +21,14 @@ int Heap::rightChild(int nodeIndex)
 
 void Heap::insertHeapNode(int heapSize, int value)
 {
-    int i = heapSize;
+	// use (*this)[i] or this->get(i) to get a value at index i
+	int i = heapSize;
 }
 
 void Heap::heapify(int heapSize, int nodeIndex)
 {
-    int i_max = nodeIndex;
+	// use (*this)[i] or this->get(i) to get a value at index i
+	int i_max = nodeIndex;
 }
 
 void Heap::buildHeap(Array& numbers)

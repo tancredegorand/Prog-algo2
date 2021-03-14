@@ -1,4 +1,8 @@
 #include "tp3.h"
+#include <QDebug>
+
+float _TestMainWindow::xFactor = 0.90f;
+float _TestMainWindow::yFactor = 0.75f;
 
 _TestMainWindow::_TestMainWindow(QWidget *parent)
     : MainWindow (parent)
@@ -9,19 +13,6 @@ void _TestMainWindow::addBinaryNode(Node* node)
     nodes.push_back(node);
     this->dirty = true;
     std::this_thread::sleep_for(std::chrono::milliseconds(MainWindow::instruction_duration / 3));
-}
-
-void _TestMainWindow::updateLayout()
-{
-    int itemWidth = qMax<int>(50, width() * 0.01f);
-    int maxX = 0, maxY = 0;
-    updateStatusItem(itemWidth);
-    updateBackground();
-    updateNumberItems(itemWidth, maxX, maxY);
-    maxY += 20;
-    updateTreeItems(itemWidth, maxX, maxY);
-    this->scene.setSceneRect(0, 0, qMax(width(), maxX), qMax(height(),maxY+itemWidth * 2));
-    this->dirty=false;
 }
 
 void _TestMainWindow::updateTreeItems(int itemWidth, int &maxX, int &maxY)
@@ -236,9 +227,136 @@ uint BinarySearchTreeHeightThread::treeHeight(const BinaryTree& tree) const
     return height + childrenHeight;
 }
 
+
+NodeGraphicsItem::NodeGraphicsItem(const int number, QGraphicsItem* parent) :
+    QGraphicsEllipseItem(parent), _data(number), state(STATE_COUNT)
+{
+    QPen pen;
+    pen.setWidth(3);
+    setPen(pen);
+    displayDefault();
+}
+
+NodeGraphicsItem::NodeGraphicsItem(const std::string& data, QGraphicsItem* parent) :
+    QGraphicsEllipseItem(parent), _data(QString::fromStdString(data)), state(STATE_COUNT)
+{
+    QPen pen;
+    pen.setWidth(3);
+    setPen(pen);
+    displayDefault();
+}
+
+NodeGraphicsItem::NodeGraphicsItem(const QVariant &data, QGraphicsItem *parent)
+    : QGraphicsEllipseItem(parent), _data(data), state(STATE_COUNT)
+{
+    QPen pen;
+    pen.setWidth(3);
+    setPen(pen);
+    displayDefault();
+}
+
+
+void NodeGraphicsItem::setData(const char *data)
+{
+    setData(QVariant(QString::fromUtf8(data)));
+}
+
+void NodeGraphicsItem::setData(const std::string& data)
+{
+    setData(QVariant(QString::fromStdString(data)));
+}
+
+void NodeGraphicsItem::setData(const int data)
+{
+    setData(QVariant(data));
+}
+
+void NodeGraphicsItem::setData(const QVariant& data)
+{
+    if(this->_data != data)
+    {
+        this->_data = data;
+        displayDefault(true);
+        update();
+    }
+}
+
+void NodeGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+                               QWidget *widget)
+{
+    QGraphicsEllipseItem::paint(painter, option, widget);
+    painter->setFont(widget->parentWidget()->font());
+    painter->drawText(this->rect(), Qt::AlignCenter, _data.toString());
+}
+
+void NodeGraphicsItem::displayDefault()
+{
+    displayDefault(false);
+}
+
+void NodeGraphicsItem::displayDefault(bool force)
+{
+    if (state == DEFAULT && !force)
+        return;
+    state = DEFAULT;
+
+    bool ok = false;
+    int _number = _data.toInt(&ok);
+    if (ok)
+    {
+        QPen pen(this->pen());
+        pen.setColor(QColor(150,220,183).lighter(60+80.f*_number/255.f));
+        setPen(pen);
+    }
+    else
+    {
+        QPen pen(this->pen());
+        pen.setColor(QColor(150,220,183));
+        setPen(pen);
+    }
+}
+
+void NodeGraphicsItem::displayReadenState()
+{
+    if (state == READEN)
+        return;
+    state = READEN;
+
+    bool ok = false;
+    int _number = _data.toInt(&ok);
+    if (!ok)
+        return;
+
+    QPen pen(this->pen());
+    pen.setColor(QColor(255,20,100).lighter(100+20.f*_number/500.f));
+    setPen(pen);
+}
+void NodeGraphicsItem::displayWrittenState()
+{
+    if (state == WRITEN)
+        return;
+    state = WRITEN;
+
+    bool ok = false;
+    int _number = _data.toInt(&ok);
+    if (!ok)
+        return;
+
+    QPen pen(this->pen());
+    pen.setColor(QColor(150,150,255).lighter(100+20.f*_number/255.f));
+    setPen(pen);
+}
+
+QVariant NodeGraphicsItem::data() const
+{
+    return _data;
+}
+
+
+
 TreeNumberGraphicsItem::TreeNumberGraphicsItem(Node* node, QGraphicsItem* parent,
                                                float leftShifting, float rightShifting)
-    : Base(parent), _node(node), left(nullptr), right(nullptr),
+    : Base(node->toString(), parent), _node(node), left(nullptr), right(nullptr),
       leftShifting(leftShifting), rightShifting(rightShifting)
 {
     setData(node->toString());
@@ -334,8 +452,8 @@ void TreeNumberGraphicsItem::updateNode()
     {
         if (!left)
             left = new TreeNumberGraphicsItem(_node->get_left_child(), this);
-        left->leftShifting = leftShifting*(0.4f+left->_treeHeight()/(float) this_height);
-        left->rightShifting = qMax<float>(0.3, rightShifting*0.75-leftShifting*0.4);
+        left->leftShifting = leftShifting*(0.4f+left->_treeHeight()/(float) this_height)-rightShifting*0.1;
+        left->rightShifting = qMax<float>(0.1, rightShifting*0.8-leftShifting*0.5);
 
         left->updateNode();
     }
@@ -343,8 +461,8 @@ void TreeNumberGraphicsItem::updateNode()
     {
         if (!right)
             right = new TreeNumberGraphicsItem(_node->get_right_child(), this);
-        right->rightShifting = rightShifting*(0.4f+right->_treeHeight()/(float) this_height);
-        right->leftShifting = qMax<float>(0.3, leftShifting*0.75-rightShifting*0.4);
+        right->rightShifting = rightShifting*(0.4f+right->_treeHeight()/(float) this_height)-leftShifting*0.1;
+        right->leftShifting = qMax<float>(0.1, leftShifting*0.8-rightShifting*0.5);
 
         right->updateNode();
     }
@@ -361,9 +479,10 @@ void TreeNumberGraphicsItem::updateLayout(int &maxX, int &maxY)
             this->scene()->addItem(left);
         float height = width*0.5+log(width*(left->_treeHeight()+1));
 
-        float y_factor = qMin<float>(qMax<float>(log((1.f+height) * leftShifting), 1.25), 7);
-        float x_factor = qMin<float>(qMax<float>(leftShifting * 0.75, 0.15), 6);
+        float y_factor = qMin<float>(qMax<float>(log((1.f+height) * leftShifting), 3.0), 7) * _TestMainWindow::yFactor;
+        float x_factor = qMin<float>(qMax<float>(leftShifting * 0.75, 0.15), 6) * _TestMainWindow::xFactor;
 
+        qDebug() << height << ' ' << y_factor;
         left->setRect(rect.x() - width * x_factor,
                       rect.y() + height * y_factor, width, width);
         left->updateLayout(maxX, maxY);
@@ -374,11 +493,12 @@ void TreeNumberGraphicsItem::updateLayout(int &maxX, int &maxY)
             this->scene()->addItem(right);
         float height = width*0.5+log(width*(right->_treeHeight()+1));
 
-        float y_factor = qMin<float>(qMax<float>(log((1.25f+height) * rightShifting), 1.25), 7);
-        float x_factor = qMin<float>(qMax<float>(rightShifting * 0.75, 0.15), 5);
+        float y_factor = qMin<float>(qMax<float>(log((1.25f+height) * rightShifting), 3.0), 7) * _TestMainWindow::yFactor;
+        float x_factor = qMin<float>(qMax<float>(rightShifting * 0.75, 0.15), 5) * _TestMainWindow::xFactor;
 
+        qDebug() << height << ' ' << y_factor;
         right->setRect(rect.x() + width * x_factor,
-                       rect.y() + height  * y_factor, width, width);
+                       rect.y() + height * y_factor, width, width);
         right->updateLayout(maxX, maxY);
     }
     if (rect.right() > maxX)
@@ -722,3 +842,10 @@ void BinarySearchTreeSearchThread::run()
     }
 }
 
+
+void _TestMainWindow::updateLayoutItems(int itemWidth, int &originX, int &originY)
+{
+    Base::updateLayoutItems(itemWidth, originX, originY);
+    originY += 20;
+    updateTreeItems(itemWidth, originX, originY);
+}

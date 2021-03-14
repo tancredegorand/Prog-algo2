@@ -5,35 +5,6 @@
 
 #include <QStringList>
 
-string HashTable::names[] =
-{
-	"Yolo",
-	"Barbara",
-	"Yoann",
-	"Antoine",
-	"Clara",
-	"Jules",
-	"Ruben",
-	"Margaux",
-	"Pierre",
-	"Laurelenn"
-	"JoLeClodo",
-	"Laura",
-	"Flora",
-	"Clara",
-	"Nicolas",
-	"Guillaume",
-	"Mr.PeanutButter",
-	"Eva",
-	"Baptiste",
-	"Solene",
-	"Lucie",
-	"Line",
-	"Victorine",
-	"Julien",
-	"Roxanne"
-};
-
 HashTable::HashTable(uint size)
 {
 	resize(size);
@@ -57,14 +28,14 @@ void HashTable::resize(uint size)
 		_data.resize(size);
 	}
 	for (uint i=oldSize; i<size; ++i)
-		_data[oldSize] = "\0";
+        _data[oldSize] = "";
 }
 
 uint HashTable::effectiveSize() const
 {
 	int size=0;
 	for (string value : _data)
-		if (value == "\0")
+        if (value == "")
 			return size;
 		else
 			size++;
@@ -130,7 +101,7 @@ void HashTable::insert(const uint index, string value)
 
 const std::vector<string>& HashTable::data() const
 {
-	return _data;
+    return _data;
 }
 
 string& HashTable::operator[](const uint index)
@@ -141,10 +112,4 @@ string& HashTable::operator[](const uint index)
 void HashTable::operator=(const HashTable &other)
 {
 	_data.assign(other._data.begin(),other._data.end());
-}
-
-void HashTable::fillRandom()
-{
-	for (uint i=0; i<size(); ++i)
-		_data[i] = names[qrand() % 20];
 }

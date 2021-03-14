@@ -97,6 +97,7 @@ public:
 	void updateStatusItem(int itemWidth);
 	void updateBackground();
 	int updateNumberItems(int itemWidth, int &maxY, int &maxX);
+    virtual void updateLayoutItems(int itemWidth, int& originX, int& originY);
 
 
     void pushFunctionCall(QString functionName, int parameter);

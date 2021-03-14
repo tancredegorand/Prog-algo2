@@ -17,10 +17,13 @@ public:
 
     _TestMainWindow(QWidget *parent=nullptr);
     void addBinaryNode(Node* node);
-    void updateLayout();
     void updateScene();
     void updateTreeItems(int itemWidth, int &maxY, int &maxX);
+    void updateLayoutItems(int itemWidth, int& originX, int& originY) override;
     void clearTrees();
+
+    static float xFactor;
+    static float yFactor;
 
 protected:
     QVector<Node*> nodes;
@@ -46,10 +49,46 @@ public:
     }
 };
 
-class TreeNumberGraphicsItem : public NumberGraphicsItem
+
+class NodeGraphicsItem : public QGraphicsEllipseItem
 {
 public:
-    typedef	NumberGraphicsItem Base;
+    explicit NodeGraphicsItem(const int _number, QGraphicsItem* parent=nullptr);
+    explicit NodeGraphicsItem(const std::string& data, QGraphicsItem* parent=nullptr);
+    explicit NodeGraphicsItem(const QVariant& data, QGraphicsItem* parent=nullptr);
+
+    void setData(const QVariant& data);
+    void setData(const int _number);
+    void setData(const std::string& data);
+    void setData(const char* data);
+
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem *option,
+               QWidget *widget=nullptr) override;
+
+    void displayDefault();
+    void displayReadenState();
+    void displayWrittenState();
+    QVariant data() const;
+
+private:
+    enum State
+    {
+        DEFAULT=0,
+        READEN,
+        WRITEN,
+        STATE_COUNT
+    };
+    void displayDefault(bool force);
+
+    QVariant _data;
+    State state;
+};
+
+
+class TreeNumberGraphicsItem : public NodeGraphicsItem
+{
+public:
+    typedef	NodeGraphicsItem Base;
 
     explicit TreeNumberGraphicsItem(Node* node, QGraphicsItem* parent=nullptr, float leftShiftting=0, float rightShiftting=0);
     ~TreeNumberGraphicsItem();

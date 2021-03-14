@@ -34,8 +34,6 @@ public:
 	string& operator[](const uint index);
 	void operator=(const HashTable& other);
 
-	void fillRandom();
-
 	void insert(const uint index, std::string value);
 	const std::vector<std::string> &data() const;
 
@@ -43,7 +41,6 @@ public:
 	void insert(string element);
 	bool contains(string element);
 
-	static string names[];
 private:
 	std::vector<string> _data;
 };
