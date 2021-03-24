@@ -506,7 +506,6 @@ void MainWindow::updateScene()
 	if (zoom)
 	{
 		dirty = true;
-		qDebug() << view.mapToScene(targetPos.toPoint()) << QString::number(scale);
 		view.centerOn(view.mapToScene(targetPos.toPoint()));
 		view.setTransform(QTransform::fromScale(scale, scale));
 		zoom = false;
