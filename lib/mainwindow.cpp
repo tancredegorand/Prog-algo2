@@ -416,15 +416,6 @@ void MainWindow::updateStatusItem(int itemWidth)
 	statusItem.setTextWidth(width() / 2);
 }
 
-MainWindow::~MainWindow()
-{
-	if (workerThread && workerThread->isRunning())
-	{
-		MainWindow::instruction_duration = 1;
-		workerThread->wait(500);
-	}
-}
-
 void MainWindow::updateScene()
 {
     QFont font("Arial", 15, QFont::DemiBold);
