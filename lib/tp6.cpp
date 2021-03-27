@@ -19,8 +19,8 @@ GraphWindow::GraphWindow(QWidget *parent)
     this->workerLayout->addWidget(&cycleButton);
 
     threads.insert(&buildButton, new GraphBuildThread(this, this));
-    threads.insert(&deepTravelButton, new GraphWideTravelThread(this, this));
-    threads.insert(&wideTravelButton, new GraphDeepTravelThread(this, this));
+    threads.insert(&deepTravelButton, new GraphDeepTravelThread(this, this));
+    threads.insert(&wideTravelButton, new GraphWideTravelThread(this, this));
     threads.insert(&cycleButton, new GraphCycleDetectionThread(this, this));
 
     connect(&buildButton, SIGNAL(clicked()), this, SLOT(runThread()));
