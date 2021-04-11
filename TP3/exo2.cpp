@@ -14,6 +14,7 @@ using std::size_t;
  */
 void binarySearchAll(Array& array, int toSearch, int& indexMin, int& indexMax)
 {
+	// do not use increments, use two different binary search loop
     indexMin = indexMax = -1;
 }
 
