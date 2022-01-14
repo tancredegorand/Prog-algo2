@@ -123,16 +123,16 @@ void SearchThread::run()
         int size = mainWindow->getParam("size").toInt();
         int index = mainWindow->getParam("index").toInt();
         Array& a = mainWindow->newRandomArray(size);
-		int toSearch = -1;
-		if (index >= 0)
-			toSearch = a.__get__(index);
+        int toSearch = 266;
+        if (index >= 0)
+            toSearch = a.__get__(index);
 		int result = function(toSearch, a, a.size());
 
-		if (index >= 0)
+        if (index >= 0)
 		{
 			if (a.__get__(result) == toSearch)
 			{
-				_message = QString("%1 is at index %2\nArray was:").arg(toSearch).arg(result);
+                _message = QString("%1 is at index %2").arg(toSearch).arg(result);
 				success = true;
 			}
 		}
@@ -140,7 +140,7 @@ void SearchThread::run()
 		{
 			if (result < 0)
 			{
-				_message = QString("%1 is not in the array\nArray was:").arg(toSearch);
+                _message = QString("%1 is not in the array").arg(toSearch);
 				success = true;
 			}
 		}
@@ -152,7 +152,6 @@ void SearchThread::run()
 											.arg(index)
 											.toStdString());
 		}
-		_message.append(a.toString());
 	}
 	catch(std::exception& e)
 	{
@@ -171,8 +170,7 @@ void AllEvensThread::run()
 		Array& result = mainWindow->newArray(n);
 		function(result, a, 0, a.size());
 		_assert(a, result);
-		_message = QString("%1 evens found\nArray was:").arg(result.effectiveSize());
-		_message.append(a.toString());
+        _message = QString("%1 evens found").arg(result.effectiveSize());
 		success = true;
 	}
 	catch(std::exception& e)

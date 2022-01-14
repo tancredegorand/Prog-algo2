@@ -58,7 +58,7 @@ class SearchThread
     {
         int size = qrand() % 10 + 5;
         mainWindow->addIntParam("size", size);
-        mainWindow->addIntParam("index", (qrand() % size) - 1);
+        mainWindow->addIntParam("index", (qrand() % size) - 1, -1, 20);
     }
 	void run() override;
 };
