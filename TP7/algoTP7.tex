@@ -37,7 +37,7 @@
  \definecolor{Green}{RGB}{20,127,50}
  \definecolor{Red}{RGB}{150,50,50}
 \definecolor{orange}{rgb}{0,0.6,0}
-\definecolor{blue}{rgb}{0.1,0.2,0.6}
+\definecolor{blue}{rgb}{0.2,0.3,0.75}
 \definecolor{mauve}{rgb}{0.58,0.5,0.62}
 \definecolor{light_green}{rgb}{0.6,0.9,0.72}
 \definecolor{light_green2}{rgb}{0.85,1.0,0.9}
@@ -111,53 +111,65 @@ Posons le graphe suivant:\\
 \newpage
 \subsection{Algorithme}
 L'algorithme consiste à déterminer, pour chaque sommet s, le prédécesseur qui permet d'accéder le plus rapidement à s.\\
-Pour cela on va regarder tous les chemins possibles en partant de C.
+Pour cela on va étudier chaque arrête du graphe (si la structure permet de recenser l'ensemble des arrêtes) et mettre à jour les distances et les prédécesseurs de chaque chaque noeud.
 \begin{algorithm}
 \caption{Belmann-Ford}\label{belmann-ford}
 \begin{algorithmic}
-    \State \textit{to\_visit} $\Leftarrow$ pile de sommets à visiter
     \State \textit{s0} $\Leftarrow$ sommet de depart
+    \State \textit{n} $\Leftarrow$ nombre de sommets
+    \State \textit{edges} $\Leftarrow$ liste des arrêtes à étudier
     \State \textit{distances} $\Leftarrow$ tableau des distances minimums en partant de \textit{s0}
     \State \textit{previous} $\Leftarrow$ tableaux des prédécesseurs de chaque sommet
     \\
-	\State \textit{to\_visit}.push(s0)
 	\State \textit{distances} $\Leftarrow$ initialisation à $\infty$
 	\State \textit{previous} $\Leftarrow$ initialisation à $\emptyset$
 	\State \textit{distances}[s0] $\Leftarrow$ 0
-    \While{not \textit{to\_visit}.isEmpty()}
-    	\State \textit{s} = \textit{to\_visit}.pop()
-    	\ForAll{Edge \textit{e} dans s.edges}
-    		\If{\textit{distances}[\textit{s}] + \textit{e}.distance < \textit{distances}[\textit{e}.distination]}
-    			\State \textit{distances}[\textit{e}.distination] $\Leftarrow$ \textit{distances}[\textit{s}] + \textit{e}.distance
-    			\State \textit{previous}[\textit{e}.distination] $\Leftarrow$ \textit{s}
-    			\If{\textit{e}.distination $\notin$ \textit{to\_visit}}
-    				\State \textit{to\_visit}.push(\textit{e}.distination)
-    			\EndIf
+	
+    \While{\textit{previous} est modifié \textbf{ET} $i \le n-1$}
+    	\ForAll{Edge \textit{e} dans edges}
+    		\State \textit{node\_distance} $\Leftarrow$ \textit{distances}[\textit{e}.source] + \textit{e}.distance
+    		\If{node\_distance < \textit{distances}[\textit{e}.distination]}
+    			\State \textit{distances}[\textit{e}.destination] $\Leftarrow$ \textit{node\_distance}
+    			\State \textit{previous}[\textit{e}.destination] $\Leftarrow$ \textit{\textit{e}.source}
     		\EndIf
     	\EndFor
+    	\State \textit{i} $\Leftarrow$ \textit{i} + 1
     \EndWhile
 \end{algorithmic}
 \end{algorithm}
 \subsection{Déroulement}
 Déroulement de l'algorithme en partant du carrefour C.\\
+(1: A$\rightarrow$E, 2: C$\rightarrow$A, 3: A$\rightarrow$D, 4: C$\rightarrow$B, 5: D$\rightarrow$E, 6: D$\rightarrow$B, 7: E$\rightarrow$B)
+\begin{center}
+\begin{tabular*}{0.95\textwidth}{|l|c|c|c|c|c||c|c|c|c|c|}
+ \rowcolor{light_green} edge & d(A) & d(B) & d(C) & d(D) & d(E) & P(A)& P(B)& P(C)& P(D)& P(E) \\
+  \rowcolor{light_green2} 0 & $\infty$ & $\infty$ & 0 & $\infty$ & $\infty$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ \\
+   \rowcolor{light_green2} 1 & $\infty$ & $\infty$ & 0 & $\infty$ & \cellcolor{blue} $\infty$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ \\
+   \rowcolor{light_green2} 2 & \cellcolor{blue} 4 & $\infty$ & 0 & $\infty$ & $\infty$ & \cellcolor{blue} C & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ \\
+   \rowcolor{light_green2}  3 & 4 & $\infty$ & 0 & \cellcolor{blue} 1 & $\infty$ & C & $\emptyset$ & $\emptyset$ & \cellcolor{blue} C & $\emptyset$ \\
+   \rowcolor{light_green2}  4 & 4 & \cellcolor{blue} 10 & 0 & 1 & $\infty$ & C & \cellcolor{blue} C & $\emptyset$ & C & $\emptyset$ \\
+   \rowcolor{light_green2}  5 & 4 & 10 & 0 & 1 & \cellcolor{blue} 7 & C & C & $\emptyset$ & C & \cellcolor{blue} D \\
+   \rowcolor{light_green2}  6 & 4 & \cellcolor{blue} 9 & 0 & 1 & 7 & C & \cellcolor{blue} D & $\emptyset$ & C & D \\
+   \rowcolor{light_green2}  7 & 4 & \cellcolor{blue} 8 & 0 & 1 & 7 & C & \cellcolor{blue} E & $\emptyset$ & C & D \\
+ \end{tabular*}
+\end{center}
+On obtient une première version du tableau, mais ce tableau ne recense pas les distances les plus courtes, pour être sûr d'avoir le chemin le plus court, il faut réitérer ce processus un certains nombres de fois, au maximum le nombre de sommets - 1.\\
 \begin{center}
 \begin{tabular*}{0.95\textwidth}{|l|c|c|c|c|c||c|c|c|c|c|}
  \rowcolor{light_green} iter. & d(A) & d(B) & d(C) & d(D) & d(E) & P(A)& P(B)& P(C)& P(D)& P(E) \\
   \rowcolor{light_green2} 0 & $\infty$ & $\infty$ & 0 & $\infty$ & $\infty$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ \\
-   \rowcolor{light_green2} 1 (C) & 4 & 10 & 0 & 1 & $\infty$ & C & C & $\emptyset$ & C & $\emptyset$ \\
-   \rowcolor{light_green2} 2 (A) & 4 & 10 & 0 & 1 & 6 & C & C & $\emptyset$ & C & A \\
-   \rowcolor{light_gray} \sout{3 (B)} & 4 & 10 & 0 & 1 & 6 & C & C & $\emptyset$ & C & A \\
-   \rowcolor{light_green2}  4 (D) & 4 & 9 & 0 & 1 & 6 & C & D & $\emptyset$ & C & A \\
-   \rowcolor{light_green2}  5 (E) & 4 & 7 & 0 & 1 & 6 & C & E & $\emptyset$ & C & A \\
+   \rowcolor{light_green2} 1 & 4 & 8 & 0 & 1 & 7 & C & E & $\emptyset$ & C & D \\
+   \rowcolor{light_green2} 2 & 4 & \cellcolor{blue} 7 & 0 & 1 & \cellcolor{blue} 6 & C & \cellcolor{blue} E & $\emptyset$ & C & \cellcolor{blue} A \\
+   \rowcolor{light_green2} 3 & 4 & 7 & 0 & 1 & 6 & C & E & $\emptyset$ & C & A \\
+   \rowcolor{light_gray} \sout{4} & 4 & 7 & 0 & 1 & 6 & C & E & $\emptyset$ & C & A \\
  \end{tabular*}
 \end{center}
+
 On obtient ainsi un tableau de successeurs permettant de trouver rapidement les chemins les plus courts vers chaque sommet, notamment celui qui nous intéresse la boutique B. 
-\[
- P(B) = E \Rightarrow P(E) = A \Rightarrow P(A) = C \\
- Path = \{C, A, E, B\}
-\]
+\[P(B) = E \Rightarrow P(E) = A \Rightarrow P(A) = C\]
+\[ Path = \{C, A, E, B\} \]
 Dommage pour ce cher Ford, il se retrouvera non pas à sa boutique mais à l'hôpital suite aux baffes qu'il a reçu des conducteurs qui attendaient derrière lui.
-\paragraph{\textbf{Note:}} On peut faire abstraction de l'itération 3 (B) si on ne cherche que les chemins menant vers B (inutile de regarder où on peut aller en partant de B si on veut aller à B).
+\paragraph{\textbf{Note:}} On peut faire abstraction de la dernière itération vu que l'itération précédente n'a pas subis de modification
 \section{Algorithme de Dijkstra}
 L'algorithme de Dijkstra est très semblable à celui de Bellman-Ford mais cet algorithme évite les redondances que peuvent causer les circuits d'un graphe en se focalisant à chaque fois sur le sommet accessible le plus rapidement. On marque chaque sommet visité pour éviter d'y retourner plus tard.
 \subsection{Algorithme}
@@ -210,5 +222,6 @@ Soit le graphe G suivant.\\
 \caption{Graphe G}
 \end{center}
 \end{figure}
-Dérouler l'algorithme de Bellman-Ford et de Dijkstra une première fois en partant de A et une deuxième fois en partant de F.
+Dérouler l'algorithme de Dijkstra une première fois en partant de A et une deuxième fois en partant de F. \\
+\textbf{Optionnel:} Dérouler  de Bellman-Ford une première fois en partant de A et une deuxième fois en partant de F.
 \end{document}
