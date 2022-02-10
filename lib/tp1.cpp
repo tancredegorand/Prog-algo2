@@ -41,7 +41,7 @@ void PowerThread::run() {
         mainWindow->clearFunctionsCall();
         int value = mainWindow->getParam("value").toInt();
         int n = mainWindow->getParam("n").toInt();
-        int result = function(value, n);
+        long result = function(value, n);
 		_assert(value, n, result);
 		_message = QString("Power %1 of %2 is %3").arg(value).arg(n).arg(result);
 		success = true;
@@ -52,9 +52,10 @@ void PowerThread::run() {
 	}
 }
 
-void PowerThread::_assert(int value, int param, int result) const
+void PowerThread::_assert(long value, long param,
+                          long result) const
 {
-	int power=pow(value, param);
+    long power=pow(value, param);
 	if (result != power)
 	{
 		QString message("Power %1 of %2 failed: %3 has been processed but it should be %4");
@@ -73,7 +74,7 @@ void FibonacciThread::run()
 		qsrand(time(nullptr));
         mainWindow->clearFunctionsCall();
         int n = mainWindow->getParam("n").toInt();
-        int result = function(n);
+        long result = function(n);
 		_assert(n, result);
 		_message = QString("Fibonacci %1 is %2").arg(n).arg(result);
 		success = true;
