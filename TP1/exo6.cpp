@@ -177,9 +177,9 @@ int main()
     }
 
     int compteur = 10;
-    while(!est_vide(&liste) && compteur > 0)
+    while(!est_vide(&file) && compteur > 0)
     {
-        std::cout << retire_file(&pile) << std::endl;
+        std::cout << retire_file(&file) << std::endl;
         compteur--;
     }
 
@@ -191,7 +191,7 @@ int main()
     compteur = 10;
     while(!est_vide(&pile) && compteur > 0)
     {
-        std::cout << retire_file(&pile) << std::endl;
+        std::cout << retire_pile(&pile) << std::endl;
         compteur--;
     }
 
