@@ -5,6 +5,7 @@
 #-------------------------------------------------
 
 lessThan(QT_MAJOR_VERSION, 4): error("requires Qt>4")
+greaterThan(QT_MAJOR_VERSION, 5): error("requires Qt<6")
 
 QT       += core gui widgets
 

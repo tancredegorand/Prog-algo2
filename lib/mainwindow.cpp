@@ -134,7 +134,7 @@ void MainWindow::updateLayout()
 
 void MainWindow::updateLayoutItems(int itemWidth, int& originX, int& originY)
 {
-    updateStatusItem(itemWidth);
+    updateStatusItem(itemWidth, originX, originY);
     updateBackground();
     updateNumberItems(itemWidth, originX, originY);
     updateFunctionCalls(itemWidth, originX, originY);
@@ -241,7 +241,8 @@ void MainWindow::clearArrays()
     maxNumbersY = 0;
 }
 
-QVariant &MainWindow::addIntParam(QString param_name, int defaultValue, int min, int max)
+QVariant &MainWindow::addIntParam(QString param_name,
+                                  int defaultValue, int min, int max)
 {
     if (parameters.contains(param_name))
         return parameters[param_name];
@@ -272,7 +273,7 @@ const QVariant &MainWindow::getParam(QString param_name)
     return parameters[param_name];
 }
 
-int MainWindow::updateFunctionCalls(int itemWidth, int &maxY, int &)
+int MainWindow::updateFunctionCalls(int itemWidth, int& maxX, int& maxY)
 {
     for (QGraphicsTextItem* item : functionCallItems)
     {
@@ -408,12 +409,13 @@ void MainWindow::setBackground(QImage *image)
 	}
 }
 
-void MainWindow::updateStatusItem(int itemWidth)
+void MainWindow::updateStatusItem(int itemWidth, int &maxX, int &maxY)
 {
 	QFont font("Arial", itemWidth * 0.35, QFont::DemiBold);
 	statusItem.setFont(font);
 	statusItem.setPos(scene.width() * 0.05f, scene.height() * 0.05f);
 	statusItem.setTextWidth(width() / 2);
+    maxY = statusItem.pos().y() + statusItem.boundingRect().height();
 }
 
 void MainWindow::updateScene()

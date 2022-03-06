@@ -4,6 +4,13 @@
 
 int isMandelbrot(Point z, int n, Point point){
     // recursiv Mandelbrot
+
+    // check n
+
+    // check length of z
+    // if Mandelbrot, return 1 or n (check the difference)
+    // otherwise, process the square of z and recall
+    // isMandebrot
     return 0;
 }
 

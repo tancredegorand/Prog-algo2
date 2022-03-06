@@ -101,7 +101,7 @@ public:
 
 	void setBackground(QImage* image);
 
-	void updateStatusItem(int itemWidth);
+    void updateStatusItem(int itemWidth, int &maxY, int &maxX);
 	void updateBackground();
 	int updateNumberItems(int itemWidth, int &maxY, int &maxX);
 
@@ -124,7 +124,7 @@ public:
     QVariant& addFloatParam(QString param_name, float defaultValue=0, float min=0, float max=100);
     const QVariant& getParam(QString param_name);
 
-    int updateFunctionCalls(int itemWidth, int &maxY, int &maxX);
+    int updateFunctionCalls(int itemWidth, int &maxX, int &maxY);
 
 	static unsigned long instruction_duration;
 

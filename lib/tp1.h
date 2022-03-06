@@ -21,7 +21,7 @@ class SumThread : public TestThread<std::function<int(int)> >
 };
 
 
-class PowerThread : public TestThread<std::function<int(int, int)> >
+class PowerThread : public TestThread<std::function<long(long, long)> >
 {
 	public:
 	PowerThread(MainWindow* mainWindow, ThreadFunctionType function, QObject *parent = nullptr)
@@ -31,7 +31,7 @@ class PowerThread : public TestThread<std::function<int(int, int)> >
         mainWindow->addIntParam("n", qrand() % 10 + 5);
     }
 	void run() override;
-	void _assert(int value, int power, int result) const;
+    void _assert(long value, long power, long result) const;
 };
 
 
@@ -58,7 +58,7 @@ class SearchThread
     {
         int size = qrand() % 10 + 5;
         mainWindow->addIntParam("size", size);
-        mainWindow->addIntParam("index", (qrand() % size) - 1);
+        mainWindow->addIntParam("index", (qrand() % size) - 1, -1, 20);
     }
 	void run() override;
 };
@@ -188,6 +188,13 @@ struct Context{
     T store(T result)
     {
         this->result = result;
+        return result;
+    }
+
+    long store(long result)
+    {
+        this->result = QVariant();
+        this->result.setValue(result);
         return result;
     }
 

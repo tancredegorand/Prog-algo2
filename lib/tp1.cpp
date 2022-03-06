@@ -41,7 +41,7 @@ void PowerThread::run() {
         mainWindow->clearFunctionsCall();
         int value = mainWindow->getParam("value").toInt();
         int n = mainWindow->getParam("n").toInt();
-        int result = function(value, n);
+        long result = function(value, n);
 		_assert(value, n, result);
 		_message = QString("Power %1 of %2 is %3").arg(value).arg(n).arg(result);
 		success = true;
@@ -52,9 +52,10 @@ void PowerThread::run() {
 	}
 }
 
-void PowerThread::_assert(int value, int param, int result) const
+void PowerThread::_assert(long value, long param,
+                          long result) const
 {
-	int power=pow(value, param);
+    long power=pow(value, param);
 	if (result != power)
 	{
 		QString message("Power %1 of %2 failed: %3 has been processed but it should be %4");
@@ -73,7 +74,7 @@ void FibonacciThread::run()
 		qsrand(time(nullptr));
         mainWindow->clearFunctionsCall();
         int n = mainWindow->getParam("n").toInt();
-        int result = function(n);
+        long result = function(n);
 		_assert(n, result);
 		_message = QString("Fibonacci %1 is %2").arg(n).arg(result);
 		success = true;
@@ -122,16 +123,16 @@ void SearchThread::run()
         int size = mainWindow->getParam("size").toInt();
         int index = mainWindow->getParam("index").toInt();
         Array& a = mainWindow->newRandomArray(size);
-		int toSearch = -1;
-		if (index >= 0)
-			toSearch = a.__get__(index);
+        int toSearch = 266;
+        if (index >= 0)
+            toSearch = a.__get__(index);
 		int result = function(toSearch, a, a.size());
 
-		if (index >= 0)
+        if (index >= 0)
 		{
 			if (a.__get__(result) == toSearch)
 			{
-				_message = QString("%1 is at index %2\nArray was:").arg(toSearch).arg(result);
+                _message = QString("%1 is at index %2").arg(toSearch).arg(result);
 				success = true;
 			}
 		}
@@ -139,7 +140,7 @@ void SearchThread::run()
 		{
 			if (result < 0)
 			{
-				_message = QString("%1 is not in the array\nArray was:").arg(toSearch);
+                _message = QString("%1 is not in the array").arg(toSearch);
 				success = true;
 			}
 		}
@@ -151,7 +152,6 @@ void SearchThread::run()
 											.arg(index)
 											.toStdString());
 		}
-		_message.append(a.toString());
 	}
 	catch(std::exception& e)
 	{
@@ -170,8 +170,7 @@ void AllEvensThread::run()
 		Array& result = mainWindow->newArray(n);
 		function(result, a, 0, a.size());
 		_assert(a, result);
-		_message = QString("%1 evens found\nArray was:").arg(result.effectiveSize());
-		_message.append(a.toString());
+        _message = QString("%1 evens found").arg(result.effectiveSize());
 		success = true;
 	}
 	catch(std::exception& e)
