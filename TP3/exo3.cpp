@@ -8,10 +8,10 @@
 MainWindow* w = nullptr;
 using std::size_t;
 
-struct BinarySearchTree : public BinaryTree
+struct SearchTreeNode : public Node
 {    
-    Node* left;
-    Node* right;
+    SearchTreeNode* left;
+    SearchTreeNode* right;
     int value;
 
     void initNode(int value)
@@ -72,22 +72,22 @@ struct BinarySearchTree : public BinaryTree
         left = right = NULL;
     }
 
-    BinarySearchTree(int value) : BinaryTree(value) {initNode(value);}
-    ~BinarySearchTree() {}
+    SearchTreeNode(int value) : Node(value) {initNode(value);}
+    ~SearchTreeNode() {}
     int get_value() const {return value;}
     Node* get_left_child() const {return left;}
     Node* get_right_child() const {return right;}
 };
 
 Node* createNode(int value) {
-    return new BinarySearchTree(value);
+    return new SearchTreeNode(value);
 }
 
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
 	MainWindow::instruction_duration = 200;
-    w = new BinarySearchTreeWindow<BinarySearchTree>();
+    w = new BinarySearchTreeWindow<SearchTreeNode>();
 	w->show();
 
 	return a.exec();
