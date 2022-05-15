@@ -273,7 +273,7 @@ const QVariant &MainWindow::getParam(QString param_name)
     return parameters[param_name];
 }
 
-int MainWindow::updateFunctionCalls(int itemWidth, int& maxX, int& maxY)
+int MainWindow::updateFunctionCalls(int itemWidth, int&, int& maxY)
 {
     for (QGraphicsTextItem* item : functionCallItems)
     {
