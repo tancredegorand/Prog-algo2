@@ -23,4 +23,5 @@ int main(int argc, char *argv[])
     w->show(); // show exercice
 
     return a.exec(); // main loop while window is opened
+
 }
