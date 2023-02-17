@@ -6,12 +6,29 @@
 #include <time.h>
 #include <chrono>
 #include <thread>
+#include <string>
 
 #include <qglobal.h>
 
 #include <QStringList>
 
+#include <memory>
+#include <string>
+#include <stdexcept>
+
 #include "mainwindow.h"
+
+
+template<typename ... Args>
+std::string string_format( const std::string& format, Args ... args )
+{
+    int size_s = std::snprintf( nullptr, 0, format.c_str(), args ... ) + 1; // Extra space for '\0'
+    if( size_s <= 0 ){ throw std::runtime_error( "Error during formatting." ); }
+    auto size = static_cast<size_t>( size_s );
+    std::unique_ptr<char[]> buf( new char[ size ] );
+    std::snprintf( buf.get(), size, format.c_str(), args ... );
+    return std::string( buf.get(), buf.get() + size - 1 ); // We don't want the '\0' inside
+}
 
 class AbstractArray
 {
@@ -107,7 +124,7 @@ public:
     ElementType& get(const int index)
     {
         if(index >= (int)_data.size())
-            throw std::out_of_range("get(): Given index is out of bound !");
+            throw std::out_of_range(string_format("get(): Given index (%d) is out of bound !", index));
         _hasBeenReaden[index] = true;
         _readAccess++;
         operation_sleep();
@@ -118,7 +135,7 @@ public:
     {
         TemplateArray<T>* self = const_cast<TemplateArray<T>*>(this);
         if(index >= (int)_data.size())
-            throw std::out_of_range("get(): Given index is out of bound !");
+            throw std::out_of_range(string_format("get(): Given index (%d) is out of bound !", index));
         self->_hasBeenReaden[index] = true;
         self->_readAccess++;
         operation_sleep();
@@ -143,14 +160,14 @@ public:
     void __set__(const int index, const ElementType& value)
     {
         if(index >= (int) _data.size())
-            throw std::out_of_range("set(): Given index is out of bound !");
+            throw std::out_of_range(string_format("set(): Given index (%d) is out of bound !", index));
         _data[index] = value;
     }
 
     void swap(const int index1, const int index2)
     {
         if(index1 >= (int)_data.size() || index2 >= (int)_data.size())
-            throw std::out_of_range("set(): Given index is out of bound !");
+            throw std::out_of_range(string_format("swap(): Given index (%d, %d) is out of bound !", index1, index2));
         const ElementType tmp = _data[index1];
         _data[index1] = _data[index2];
         _data[index2] = tmp;

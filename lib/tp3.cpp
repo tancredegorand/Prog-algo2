@@ -115,6 +115,41 @@ void BinarySearchThread::run()
     }
 }
 
+void checkAll(Array& array, int value, int& i1, int& i2)
+{
+    int s = 0;
+    int e = array.size();
+    int mid = s;
+
+    while(s<e)
+    {
+        mid = (s+e)/2;
+        int a = array.__get__(mid);
+        if (a>value) e=mid;
+        else if (a==value)
+        {
+            i1 = mid;
+            e = mid;
+        }
+        else s=mid+1;
+    }
+
+    s = i1;
+    e = array.size();
+    while(s<e)
+    {
+        mid = (s+e)/2;
+        int a = array.__get__(mid);
+        if (a>value) e=mid;
+        else if (a==value)
+        {
+            i2 = mid;
+            s = mid+1;
+        }
+        else s = mid+1;
+    }
+}
+
 void BinarySearchAllThread::run()
 {
     try
@@ -124,11 +159,26 @@ void BinarySearchAllThread::run()
         int n = mainWindow->getParam("n").toInt();
         int index = mainWindow->getParam("index").toInt();
         Array& a = mainWindow->newSortedRandomArray(n);
+        int checkMin = -1, checkMax = -1;
+
+        for (size_t i=0; i<a.size()-5; i++)
+        {
+            for(int j=1; j<rand()%5;j++)
+            {
+                a.__set__(i+j, a.__get__(i));
+            }
+        }
+
         int toSearch = -1;
         if (index >= 0 && index < (int) a.size())
+        {
             toSearch = a.__get__(index);
+            checkAll(a, toSearch, checkMin, checkMax);
+        }
         else
+        {
             index = -1;
+        }
         Array& _toSearchArray = mainWindow->newArray(1);
         _toSearchArray.__set__(0, toSearch);
 
@@ -137,8 +187,7 @@ void BinarySearchAllThread::run()
 
         if (index >= 0)
         {
-            if (resultMin >=0 && a.__get__(resultMin) == toSearch &&
-                    resultMax >=0 && a.__get__(resultMax) == toSearch)
+            if (resultMin == checkMin && resultMax == checkMax)
             {
                 _message = QString("%1 is at indexes (%2..%3)").arg(toSearch).arg(resultMin).arg(resultMax);
                 success = true;
@@ -162,11 +211,11 @@ void BinarySearchAllThread::run()
                                          .arg(toSearch)
                                          .toStdString());
             }
-            QString message("Search failed: (%1, %2) has been found but values at this indexes are (%1, %2)\nTo Search: %5");
+            QString message("Search failed: (%1, %2) has been found but you should find (%3, %4)\nTo Search: %5");
             throw std::runtime_error(message.arg(resultMin)
                                      .arg(resultMax)
-                                     .arg(a.__get__(resultMin))
-                                     .arg(a.__get__(resultMax))
+                                     .arg(checkMin)
+                                     .arg(checkMax)
                                      .arg(toSearch)
                                      .toStdString());
         }
