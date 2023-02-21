@@ -1,4 +1,4 @@
-#include "tp1.h"
+/*#include "tp1.h"
 #include <QApplication>
 #include <time.h>
 
@@ -23,7 +23,26 @@ int main(int argc, char *argv[])
 
     return a.exec(); // main loop while window is opened
 }
+*/
 
+#include <iostream>
+using namespace std;
 
+int search(int value, int array[], int size){
+    for (size_t i = 0; i < size; i++)
+    {
+        if(array[i]==value){
+            return i; 
+        }
+    }
+    return -1;
+    
+}
 
+int main(){
+    int size = 5;
+    int array[] = {1, 2, 3, 4, 5}; 
+    cout << search(3, array, size) << endl; 
 
+    return 0; 
+}

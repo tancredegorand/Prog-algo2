@@ -1,4 +1,4 @@
-#include "tp1.h"
+/*#include "tp1.h"
 #include <QApplication>
 #include <time.h>
 
@@ -21,4 +21,23 @@ int main(int argc, char *argv[])
     w->show(); // show exercice
 
     return a.exec(); // main loop while window is opened
+}
+
+*/
+#include <iostream>
+using namespace std;
+
+long power(long value, long n){
+    if (n==0){
+        return 1; 
+    }
+    return value*power(value, n-1); 
+
+}
+
+
+int main(){
+    cout << power(2,3) << endl; 
+
+    return 0; 
 }
