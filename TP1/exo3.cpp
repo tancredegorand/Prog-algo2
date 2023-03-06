@@ -49,15 +49,3 @@ int main(){
 
 
 
-
-
-// int search(int value, int array[], int size){
-//     for (size_t i = 0; i < size; i++)
-//     {
-//         if(array[i]==value){
-//             return i; 
-//         }
-//     }
-//     return -1;
-    
-// }
