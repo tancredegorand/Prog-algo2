@@ -29,14 +29,14 @@ int main(int argc, char *argv[])
 using namespace std;
 
 int search(int value, int array[], int size){
-    for (size_t i = 0; i < size; i++)
-    {
-        if(array[i]==value){
-            return i; 
-        }
+    if(size <=0){
+        return -1; 
     }
-    return -1;
-    
+    if(value == array[size-1]){
+        return size-1; 
+    }
+    return search(value, array, size-1); 
+
 }
 
 int main(){
@@ -46,3 +46,18 @@ int main(){
 
     return 0; 
 }
+
+
+
+
+
+// int search(int value, int array[], int size){
+//     for (size_t i = 0; i < size; i++)
+//     {
+//         if(array[i]==value){
+//             return i; 
+//         }
+//     }
+//     return -1;
+    
+// }

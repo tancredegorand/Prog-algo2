@@ -87,7 +87,6 @@ vector<int> quickSort(vector<int> current){
     return res;
 }
 
-
 void draw(vector<int>& vecteur){
     cout << endl;
     cout << "--------------" << endl;
