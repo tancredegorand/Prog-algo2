@@ -3,7 +3,7 @@
 
 #include "array.h"
 
-
+#ifndef DISABLE_HEAP
 class Heap : public Array
 {
 public:
@@ -39,4 +39,5 @@ public:
 //	std::vector<char> characters;
 //};
 
+#endif // DISABLE_HEAP
 #endif // HEAP_H

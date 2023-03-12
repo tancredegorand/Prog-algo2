@@ -4,6 +4,7 @@
 #include "tp4.h"
 #include "array.h"
 
+#ifndef DISABLE_HEAP
 
 class HeapChildsThread : public HeapThread
 {
@@ -456,3 +457,32 @@ Node* HeapNode::get_right_child() const
 {
     return this->right;
 }
+#else
+#include "HuffmanNode.h"
+
+HuffmanThread::HuffmanThread(HuffmanMainWindow *mainWindow, TestThread::ThreadFunctionType function, QObject *parent)
+    : TestThread(mainWindow, function, parent) {}
+
+void HuffmanThread::run(){
+    HuffmanMainWindow* mainWindow = dynamic_cast<HuffmanMainWindow*>(this->mainWindow);
+    try
+    {
+        qsrand(time(nullptr));
+        function(mainWindow->huffmanTree);
+    }
+    catch(std::exception& e)
+    {
+        _message = QString(e.what());
+        success = false;
+    }
+}
+
+void HuffmanMainWindow::updateScene()
+{
+    _TestMainWindow::updateScene();
+    if (this->huffmanTree && !this->nodes.size())
+    {
+        nodes.push_back(this->huffmanTree);
+    }
+}
+#endif

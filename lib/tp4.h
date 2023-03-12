@@ -8,6 +8,7 @@
 #include "thread.h"
 #include "tp3.h"
 
+#ifndef DISABLE_HEAP
 class HeapNumberGraphicsItem : public TreeNumberGraphicsItem
 {
 public:
@@ -73,6 +74,41 @@ private:
     QPushButton sortButton;
 
     QVector<QVector<HeapNumberGraphicsItem*> > heapItems;
+};
+#endif // DISABLE_HEAP
+
+struct HuffmanNode;
+class HuffmanMainWindow;
+
+class HuffmanThread : public TestThread<std::function<void(HuffmanNode*&)> >
+{
+public:
+    HuffmanThread(HuffmanMainWindow* mainWindow, HuffmanThread::ThreadFunctionType function,
+               QObject *parent = nullptr);
+
+    virtual void run() override;
+};
+
+
+class HuffmanMainWindow : public _TestMainWindow
+{
+    Q_OBJECT
+    friend class HuffmanThread;
+
+public:
+    typedef HuffmanThread::ThreadFunctionType HuffmanFunctionType;
+
+    HuffmanMainWindow(HuffmanFunctionType function, QWidget *parent=nullptr)
+        : _TestMainWindow(parent)
+    {
+        workerThread = new HuffmanThread(this, function, this);
+        connect(workerThread, SIGNAL(finished()), this, SLOT(handleResult()));
+    }
+
+    void updateScene() override;
+
+private:
+    HuffmanNode* huffmanTree=nullptr;
 };
 
 #endif // TP4_H
