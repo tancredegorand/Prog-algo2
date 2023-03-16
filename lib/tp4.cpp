@@ -203,23 +203,23 @@ void HeapChildsThread::run()
 		{
 			int left = i * 2 + 1;
 			int right = i * 2 + 2;
-			if (this->heap.leftChild(i) != left)
+            if (this->heap.leftChildIndex(i) != left)
 			{
                 QString message("Left Child: Node %1 left child is not node %2 (value=%3) "
 								"but node %4 (value=%5)");
 				throw std::runtime_error(message.arg(i)
-												.arg(this->heap.leftChild(i))
-												.arg(this->heap[this->heap.leftChild(i)])
+                                                .arg(this->heap.leftChildIndex(i))
+                                                .arg(this->heap[this->heap.leftChildIndex(i)])
 												.arg(left)
 												.arg(this->heap[left])
 												.toStdString());
 			}
-			else if (this->heap.rightChild(i) != right) {
+            else if (this->heap.rightChildIndex(i) != right) {
                 QString message("Right Child: Node %1 right child is not node %2 (value=%3) "
 								"but node %4 (value=%5)");
 				throw std::runtime_error(message.arg(i)
-												.arg(this->heap.rightChild(i))
-												.arg(this->heap[this->heap.rightChild(i)])
+                                                .arg(this->heap.rightChildIndex(i))
+                                                .arg(this->heap[this->heap.rightChildIndex(i)])
 												.arg(right)
 												.arg(this->heap[right])
 												.toStdString());
@@ -458,31 +458,5 @@ Node* HeapNode::get_right_child() const
     return this->right;
 }
 #else
-#include "HuffmanNode.h"
 
-HuffmanThread::HuffmanThread(HuffmanMainWindow *mainWindow, TestThread::ThreadFunctionType function, QObject *parent)
-    : TestThread(mainWindow, function, parent) {}
-
-void HuffmanThread::run(){
-    HuffmanMainWindow* mainWindow = dynamic_cast<HuffmanMainWindow*>(this->mainWindow);
-    try
-    {
-        qsrand(time(nullptr));
-        function(mainWindow->huffmanTree);
-    }
-    catch(std::exception& e)
-    {
-        _message = QString(e.what());
-        success = false;
-    }
-}
-
-void HuffmanMainWindow::updateScene()
-{
-    _TestMainWindow::updateScene();
-    if (this->huffmanTree && !this->nodes.size())
-    {
-        nodes.push_back(this->huffmanTree);
-    }
-}
 #endif

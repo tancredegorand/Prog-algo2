@@ -34,7 +34,7 @@ struct HuffmanNode : public Node
     virtual bool isLeaf() const {return !this->left && !this->right;}
 
     void insertNode(HuffmanNode*);
-    void processCodes(std::string baseCode);
+    void processCodes(const std::string &baseCode);
     void fillCharactersArray(std::string nodes_for_chars[]);
 
 
@@ -49,6 +49,8 @@ struct HuffmanNode : public Node
 class HuffmanHeap : public TemplateArray<HuffmanNode*>
 {
 public:
+    typedef TemplateArray<HuffmanNode*> Base;
+
     virtual ~HuffmanHeap() {}
 
     HuffmanHeap(uint size=100) : TemplateArray<HuffmanNode*>()
@@ -66,9 +68,11 @@ public:
         QStringList list;
         for (const HuffmanNode* value : _data)
         {
-            list.append(value->toString());
+            if(!value)
+                break;
+            list.append(value->toString().replace('\n', ""));
         }
-        return QString("[%1]").arg(list.join(", "));
+        return QString("[\n%1\n]").arg(list.join(", "));
     }
 
 
@@ -88,7 +92,13 @@ public:
     }
 
     void insertHeapNode(int heapSize, HuffmanNode *newNode);
+    void heapify(int heapSize, int nodeIndex);
     HuffmanNode* extractMinNode(int heapSize);
+
+protected:
+    void insert(const int index, const ElementType& value) {
+        Base::insert(index, value);
+    }
 };
 
 #endif // HUFFMANNNODE_H

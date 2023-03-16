@@ -11,9 +11,9 @@ public:
 	Heap(const Heap& other);
 	Heap(const std::vector<int>& other);
 
-	int leftChild(int nodeIndex);
+    int leftChildIndex(int nodeIndex);
 
-	int rightChild(int nodeIndex);
+    int rightChildIndex(int nodeIndex);
 
 	void insertHeapNode(int heapSize, int value);
 

@@ -24,7 +24,8 @@ SOURCES += \
         ../lib/binarytree.cpp \
         ../lib/heap.cpp \
         ../lib/tp3.cpp \
-        ../lib/tp4.cpp
+        ../lib/tp4.cpp \
+    ../lib/tp4_exo2.cpp
 
 HEADERS += \
         HuffmanNode.h \
@@ -34,6 +35,7 @@ HEADERS += \
         ../lib/binarytree.h \
         ../lib/heap.h \
         ../lib/tp3.h \
-        ../lib/tp4.h
+        ../lib/tp4.h \
+    ../lib/tp4_exo2.h
         
 INCLUDEPATH += ../lib

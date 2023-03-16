@@ -89,26 +89,6 @@ public:
     virtual void run() override;
 };
 
-
-class HuffmanMainWindow : public _TestMainWindow
-{
-    Q_OBJECT
-    friend class HuffmanThread;
-
-public:
-    typedef HuffmanThread::ThreadFunctionType HuffmanFunctionType;
-
-    HuffmanMainWindow(HuffmanFunctionType function, QWidget *parent=nullptr)
-        : _TestMainWindow(parent)
-    {
-        workerThread = new HuffmanThread(this, function, this);
-        connect(workerThread, SIGNAL(finished()), this, SLOT(handleResult()));
-    }
-
-    void updateScene() override;
-
-private:
-    HuffmanNode* huffmanTree=nullptr;
-};
+void displayCharacterFrequences(Array frequences);
 
 #endif // TP4_H
