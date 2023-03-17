@@ -98,6 +98,7 @@ void HuffmanHeap::heapify(int heapSize, int nodeIndex)
       * this->get(i): HuffmanNode*  <-> this->get(i)->frequences
       * you can use `this->swap(firstIndex, secondIndex)`
      **/
+    // Your code
 
 }
 
@@ -178,7 +179,9 @@ string huffmanEncode(const string& toEncode, HuffmanNode* huffmanTree)
     // Your code
     std::string charactersCodes[256]; // array of 256 huffman codes for each character
     huffmanTree->fillCharactersArray(charactersCodes);
+    string encoded = "";
 
+    return encoded;
 }
 
 
