@@ -25,19 +25,18 @@
 
 using namespace std; 
 
- int triSelection(vector<int>& vecteur){
-	for (size_t i = 0; i < vecteur.size(); i++)
-	{
-		for (size_t j = 0; j< vecteur.size(); j++)
-		{
-			if (vecteur[i] < vecteur[j]){
-				swap(vecteur[i], vecteur[j]); 
-			}
-		}
-		
-	}
-    return 0; 
- }
+
+void triSelection(std::vector<int>& vecteur){
+    for (int i = 0 ; i < vecteur.size() ; i++){
+        int min = i;
+        for(int j = i+1 ; j < vecteur.size() ; j++){
+            if (vecteur[j] < vecteur[min]){
+                min = j;
+            }
+        }
+        swap(vecteur[i], vecteur[min]);
+    }
+}
 
 
  void draw(vector<int> vecteur){
@@ -64,3 +63,8 @@ int main(){
 
 	return 0; 
 }
+
+
+
+
+

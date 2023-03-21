@@ -126,41 +126,69 @@
 
 
 
+// #include <iostream>
+// #include <vector>
+// #include <cstdlib>
+
+// using namespace std; 
+
+// vector<int> quickSort(vector<int> current){
+// 	if(current.size() <= 1){
+// 		return current;
+// 	}
+
+// 	int pivot = current[rand() % current.size()]; // sélectionne pivot 
+// 	vector<int> lowers, greaters;
+
+//  	//lowers et greaters
+// 	for(int i=0; i<current.size(); i++){
+// 		if(current[i] < pivot){
+// 			lowers.push_back(current[i]);
+// 		} else if(current[i] > pivot){
+// 			greaters.push_back(current[i]);
+// 		}
+// 	}
+
+// 	lowers = quickSort(lowers);
+// 	greaters = quickSort(greaters);
+
+
+// 	vector<int> res;
+// 	res.insert(res.end(), lowers.begin(), lowers.end());
+// 	res.push_back(pivot);
+// 	res.insert(res.end(), greaters.begin(), greaters.end());
+
+// 	return res;
+// }
+
+
 #include <iostream>
 #include <vector>
-#include <cstdlib>
+#include <cstdlib> 
 
-using namespace std; 
+using namespace std;
 
-vector<int> quickSort(vector<int> current){
-	if(current.size() <= 1){
-		return current;
-	}
-
-	int pivot = current[rand() % current.size()]; // sélectionne pivot 
-	vector<int> lowers, greaters;
-
- 	//lowers et greaters
-	for(int i=0; i<current.size(); i++){
-		if(current[i] < pivot){
-			lowers.push_back(current[i]);
-		} else if(current[i] > pivot){
-			greaters.push_back(current[i]);
-		}
-	}
-
-	lowers = quickSort(lowers);
-	greaters = quickSort(greaters);
-
-
-	vector<int> res;
-	res.insert(res.end(), lowers.begin(), lowers.end());
-	res.push_back(pivot);
-	res.insert(res.end(), greaters.begin(), greaters.end());
-
-	return res;
+void quickSort(vector<int>& vecteur){
+    int size = vecteur.size();
+    if (size > 1){
+        int pivot = rand() % size; 
+        int tab_pivot = vecteur[pivot];
+        std::vector<int> lowers;
+        std::vector<int> greaters;
+        for(int i = 0 ; i < size; i++){
+            if (pivot != i){
+                if (vecteur[i] < vecteur[pivot]) lowers.push_back(vecteur[i]); 
+                else greaters.push_back(vecteur[i]);
+            }
+        }
+        quickSort(lowers);
+        quickSort(greaters);
+        vecteur.clear();
+        vecteur.insert(vecteur.end(), lowers.begin(), lowers.end());
+        vecteur.push_back(tab_pivot); 
+        vecteur.insert(vecteur.end(), greaters.begin(), greaters.end());
+    }
 }
-
 
 void draw(vector<int>& vecteur){
     cout << endl;
@@ -171,7 +199,6 @@ void draw(vector<int>& vecteur){
     }
 }
 
-
 int main(){
     vector<int> vecteur;
     for (size_t i = 0; i < 10; i++)
@@ -180,8 +207,8 @@ int main(){
     }
 
     draw(vecteur);
-	vector<int> vecteur2 = quickSort(vecteur); 
-	draw(vecteur2);
+    quickSort(vecteur); 
+    draw(vecteur);
 
     return 0; 
 }

@@ -34,11 +34,54 @@
 
 using namespace std; 
 
+int binarySearchMin(vector<int>& vecteur, int toSearch){
+    int start = 0; 
+    int end = vecteur.size(); 
+    int mid; 
+    int res; 
 
-
-int binarySearchAll(vector<int>& vecteur, int toSearch, int indexMax, int indexMin){
-	
+    while (start < end)
+    {
+        mid = (start+end)/2; 
+        if (toSearch > vecteur[mid]){
+            start = mid+1; 
+        }
+        else if (toSearch < vecteur[mid]){
+            end = mid; 
+        }
+        else {
+            while(vecteur[mid-1] == toSearch){
+                mid = mid-1; 
+            }
+            return mid; 
+        }
+    }	
 	return -1;
+}
+
+
+int binarySearchMax(vector<int>& vecteur, int toSearch, int indexMin){
+    int res = indexMin; 
+    while(indexMin + 1 < vecteur.size() && vecteur[indexMin+1] == toSearch){
+        res = res+1;
+        indexMin++; 
+    }
+    return res; 
+}
+
+
+
+void binarySearchAll(vector<int>& vecteur, int toSearch, int& indexMax, int& indexMin){
+    if (vecteur.size() <= 0){
+        indexMax = -1; 
+        indexMin = -1;
+    }
+    indexMin = binarySearchMin(vecteur, toSearch);   
+    if (indexMin == -1){
+        indexMax = -1; 
+    }else{
+        indexMax =  binarySearchMax(vecteur, toSearch,  indexMin); 
+    }
 }
 
 
@@ -56,12 +99,28 @@ int main(){
     vector<int> vecteur;
     for (size_t i = 1; i <= 10; i++)
     {
-        vecteur.push_back(i);
+        if (i > 2 && i < 8){
+            vecteur.push_back(5);
+        }
+        else {
+            vecteur.push_back(i);
+        }
     }
+    int indexMax = vecteur.size(); 
+    int indexMin = 0; 
+
 	draw(vecteur); 
 
-	int n =  rand() % vecteur.size();	
-	cout << endl << "nombre à trouver : " << n << endl;     
+	int n =  5;	
+	cout << endl << "nombre à trouver : " << n << endl;   
+
+    binarySearchAll(vecteur, n, indexMax, indexMin); 
+
+    cout << "index Min : " << indexMin << endl; 
+    cout << "index Max : " << indexMax << endl; 
+
+
+
     return 0; 
 }
 
