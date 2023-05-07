@@ -1,55 +1,113 @@
-#include <tp5.h>
-#include <QApplication>
 #include <time.h>
+#include <vector>
+#include <string>
+#include <iostream>
 
-MainWindow* w = nullptr;
-
-
-std::vector<string> TP5::names(
+struct Element
 {
-    "Yolo", "Anastasiya", "Clement", "Sirine", "Julien", "Sacha", "Leo", "Margot",
-    "JoLeClodo", "Anais", "Jolan", "Marie", "Cindy", "Flavien", "Tanguy", "Audrey",
-    "Mr.PeanutButter", "Bojack", "Mugiwara", "Sully", "Solem",
-    "Leo", "Nils", "Vincent", "Paul", "Zoe", "Julien", "Matteo",
-    "Fanny", "Jeanne", "Elo"
-});
+    std::string value;
+    Element * next;
+
+    Element(std::string value) {
+        this->value = value;
+        this->next = nullptr;
+    }
+};
 
 
-int HashTable::hash(std::string element)
+int hash(std::vector<Element*> hash_table, std::string element)
 {
-    // use this->size() to get HashTable size
-    return 0;
+    return (int) element[0] % hash_table.size();
 }
 
-void HashTable::insert(std::string element)
+void insert(std::vector<Element*>* hash_table, std::string element)
 {
-    // use (*this)[i] or this->get(i) to get a value at index i
+    if ((*hash_table)[hash(*hash_table, element)] == nullptr) {
+        (*hash_table)[hash(*hash_table, element)] = new Element(element);
+    }
+    else {
+        Element* aux = (*hash_table)[hash(*hash_table, element)];
+        while (aux->next != nullptr) {
+            aux = aux->next;
+        }
+        aux->next = new Element(element);
+    }
 }
 
-/**
- * @brief buildHashTable: fill the HashTable with given names
- * @param table table to fiil
- * @param names array of names to insert
- * @param namesCount size of names array
- */
-void buildHashTable(HashTable& table, std::string* names, int namesCount)
+bool contains(std::vector<Element*> hash_table, std::string element)
 {
-
-}
-
-bool HashTable::contains(std::string element)
-{
-    // Note: Do not use iteration (for, while, ...)
+    if (hash_table[hash(hash_table, element)] == nullptr) {
+        return false;
+    }
+    Element* aux = hash_table[hash(hash_table, element)];
+    while (aux != nullptr) {
+        if (aux->value == element) {
+            return true;
+        }
+        aux = aux->next;
+    }
     return false;
 }
 
+void display(Element * element) {
+    Element * aux = element;
+    while (aux != nullptr) {
+        std::cout << aux->value << " ; ";
+        aux = aux->next;
+    }
+    std::cout << std::endl;
+}
+
+void buildHashTable(std::vector<Element*>* hash_table, std::string* names, int namesCount)
+{
+    for (int i = 0; i < namesCount; i++) {
+        insert(hash_table, names[i]);
+    }
+}
 
 int main(int argc, char *argv[])
-{
-	QApplication a(argc, argv);
-	MainWindow::instruction_duration = 10;
-	w = new HashWindow();
-	w->show();
 
-	return a.exec();
+{
+    /*std::vector<std::string> names({
+        "Yolo", "Anastasiya", "Clement", "Sirine", "Julien", "Sacha", "Leo", "Margot",
+        "JoLeClodo", "Anais", "Jolan", "Marie", "Cindy", "Flavien", "Tanguy", "Audrey",
+        "Mr.PeanutButter", "Bojack", "Mugiwara", "Sully", "Solem",
+        "Leo", "Nils", "Vincent", "Paul", "Zoe", "Julien", "Matteo",
+        "Fanny", "Jeanne", "Elo"
+    });*/
+    std::vector<std::string> names;
+    names.push_back("Yolo");
+    names.push_back("Anastasiya");
+    names.push_back("Clement");
+    names.push_back("Sirine");
+    names.push_back("Julien");
+    names.push_back("Sacha");
+    names.push_back("Leo");
+
+    std::vector<Element*> hash_table;
+    hash_table.resize(names.size());
+    for (int i = 0; i < names.size(); i++) {
+        hash_table[i] = nullptr;
+    }
+
+    std::cout << "name size : " << names.size() << std::endl;
+    for (int i = 0; i < names.size(); i++)
+    {
+        std::cout << names[i] << " " ;
+    }
+    std::cout << std::endl;
+
+    std::cout <<"-----------" << std::endl; 
+
+
+    buildHashTable(&hash_table, names.data(), names.size());
+    
+    for (int i = 0; i < names.size(); i++) {
+        display(hash_table[i]);
+    }
+
+    std::cout <<"-----------" << std::endl; 
+    std::cout << contains(hash_table, "Julien") << std::endl; 
+
+
 }
